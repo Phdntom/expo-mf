@@ -138,6 +138,7 @@ class ExpoMF(BaseEstimator, TransformerMixin):
 
     def _update(self, X, vad_data, **kwargs):
         '''Model training and evaluation on validation set'''
+        
         n_users = X.shape[0]
         XT = X.T.tocsr()  # pre-compute this
         old_ndcg = -np.inf
@@ -171,7 +172,8 @@ class ExpoMF(BaseEstimator, TransformerMixin):
 
             start_idx = range(0, n_users, self.batch_size)
             end_idx = start_idx[1:] + [n_users]
-
+            
+            # exposure update
             A_sum = np.zeros_like(self.mu)
             for lo, hi in zip(start_idx, end_idx):
                 A_sum += a_row_batch(X[lo:hi], self.theta[lo:hi], self.beta,
@@ -228,6 +230,7 @@ def a_row_batch(Y_batch, theta_batch, beta, lam_y, mu):
     pEX = sqrt(lam_y / 2 * np.pi) * \
         np.exp(-lam_y * theta_batch.dot(beta.T)**2 / 2)
     A = (pEX + EPS) / (pEX + EPS + (1 - mu) / mu)
+    # when Y is obs, A is not latent
     A[Y_batch.nonzero()] = 1.
     return A
 
