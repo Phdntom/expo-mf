@@ -156,6 +156,7 @@ class ExpoMF(BaseEstimator, TransformerMixin):
                 print('\r\tUpdating user factors: time=%.2f'
                       % (time.time() - start_t))
                 start_t = _writeline_and_time('\tUpdating item factors...')
+                
             self.beta = recompute_factors(self.theta, self.beta, XT,
                                           self.lam_beta / self.lam_y,
                                           self.lam_y,
